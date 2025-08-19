@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sciatius Bulk Emailer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #031119 0%, #1a2634 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #072637 0%, #0a3a50 100%);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 3rem;
+            margin: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 10px;
+            border-radius: 50px;
+            transition: all 0.5s ease;
+            z-index: 1000;
+            height: 50px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            margin-right: 0.6rem;
+            font-size: 2.2rem;
+            color: #e3a119;
+        }
+
+        .logo img {
+            height: 2.2em;
+            vertical-align: middle;
+            margin-right: 10px;
+            transition: filter 0.3s ease;
+        }
+
+        .logo img:hover {
+            filter: brightness(1.2);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: white;
+            padding: 0.9rem 2.2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            height: 40px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #f7c948 0%, #e3a119 100%);
+        }
+
+        .login-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Container Styles */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 90px);
+            transition: all 0.5s ease;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #031119 0%, #1a2634 100%);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            box-shadow: 3px 0 25px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 90px;
+            bottom: 0;
+            overflow-y: hidden; /* Remove scrollbar to prevent slider-like behavior */
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h3 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar h3 i {
+            font-size: 1.8rem;
+        }
+
+        .feature-list {
+            color: #fff;
+            list-style: none;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .feature-list li {
+            margin: 0;
+            padding: 1rem;
+            background : linear-gradient(180deg, #1a1c22 , #1a1c22 ,#1a1c22 ) !important;
+            border-radius: 12px;
+            cursor: not-allowed;
+            opacity: 1 !important;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+            height: 60px; /* Fixed height for uniform size */
+            display: flex;
+            align-items: center;
+            width: 100%; /* Ensure full width */
+            box-sizing: border-box;
+        }
+
+        .feature-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .feature-list li i {
+            margin-right: 0.6rem;
+            color: #FFF;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .feature-list a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .feature-list a:hover {
+            color: #e3a119;
+        }
+
+        .locked-overlay {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: #fff !important;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .locked-overlay i {
+            color: #e3a119;
+        }
+
+        .sidebar .info-box {
+            margin-top: 2.5rem;
+            padding: 1.2rem;
+            background: rgba(255, 193, 7, 0.15);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .info-box:hover {
+            background: rgba(255, 193, 7, 0.25);
+        }
+
+        .sidebar .info-box i {
+            font-size: 1.5rem;
+            color: #ffc107;
+            margin-bottom: 0.6rem;
+        }
+
+        .sidebar .info-box p {
+            font-size: 0.95rem;
+            color: #fff;
+            line-height: 1.5;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 4rem;
+            color: white;
+            margin-left: 300px;
+            transition: all 0.5s ease;
+        }
+
+        /* Hero Section Styles */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 5rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .hero-section h1 {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-section h1:hover {
+            transform: scale(1.02);
+        }
+
+        .hero-section h1::after {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 5px;
+            background: linear-gradient(to right, #e3a119, rgba(227, 161, 25, 0));
+            filter: blur(1px);
+            transition: width 0.5s ease;
+        }
+
+        .hero-section h1:hover::after {
+            width: 100%;
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.85;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* Info Section Styles */
+        .info-section {
+            background: linear-gradient(135deg, #0A0F3C 0%, #141E30 100%);
+            backdrop-filter: blur(15px);
+            padding: 3.5rem;
+            margin: 2.5rem 0;
+            border-radius: 25px;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .info-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-section h2 {
+            color: #e3a119;
+            font-size: 2.8rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-section p {
+            line-height: 1.9;
+            font-size: 1.15rem;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        .company-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #0F0C29 0%, #302B63 100%, #0A0F3C);
+            color: #fff;
+            padding: 2rem;
+            border-radius: 18px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #302B63 0%, #0A0F3C 100%, #0F0C29);
+        }
+
+        .info-card i {
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover i {
+            transform: scale(1.1);
+        }
+
+        .info-card h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .info-card p {
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Tab Switcher Styles */
+        .info-switcher-section {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .switcher-buttons {
+            display: inline-flex;
+            gap: 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .switcher-buttons button {
+            padding: 0.9rem 1.8rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .switcher-buttons button.active {
+            background: #667eea;
+            color: #fff;
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .switcher-buttons button:not(.active) {
+            background: #031119;
+            color: #e3a119;
+        }
+
+        .switcher-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 3rem;
+            }
+
+            .hero-section h1 {
+                font-size: 3.5rem;
+            }
+
+            .info-section h2 {
+                font-size: 2.3rem;
+            }
+
+            .feature-list li {
+                height: 55px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                padding: 1.5rem;
+                box-shadow: none;
+                min-height: auto; /* Allow sidebar to fit content */
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1rem;
+            }
+
+            .hero-section h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero-section p {
+                font-size: 1.1rem;
+            }
+
+            .header {
+                padding: 1rem 1.5rem;
+                height: 60px;
+                margin: 10px;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .login-btn {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .info-section {
+                padding: 2rem 1rem;
+            }
+
+            .info-section h2 {
+                font-size: 2rem;
+            }
+
+            .company-info {
+                grid-template-columns: 1fr;
+            }
+
+            .switcher-buttons {
+                flex-direction: column;
+                gap: 0.8rem;
+                padding: 0.8rem;
+            }
+
+            .switcher-buttons button {
+                width: 100%;
+                padding: 0.8rem;
+            }
+
+            .feature-list li {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-section p {
+                font-size: 1rem;
+            }
+
+            .info-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .info-card {
+                padding: 1.5rem;
+            }
+
+            .info-card i {
+                font-size: 2.5rem;
+            }
+
+            .info-card h3 {
+                font-size: 1.2rem;
+            }
+
+            .sidebar h3 {
+                font-size: 1.4rem;
+            }
+
+            .feature-list li {
+                height: 45px;
+                padding: 0.8rem;
+            }
+
+            .feature-list a {
+                font-size: 0.9rem;
+            }
+
+            .locked-overlay {
+                right: 8px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="https://aicdn.picsart.com/551e5e55-85ba-4d99-bbe1-a84d3e96d35e.png" alt="Company Logo" style="height: 2em; vertical-align: middle; margin-right: 8px;">
+            <span style="color: #e3a119;">Sciatius</span>&nbsp;Bulk Emailer
+        </div>
+        <a href="login.html" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3><i class="fas fa-cog"></i> Features</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-upload"></i><a href="login.html"> Upload Contacts<span class="locked-overlay"><i class="fas fa-lock"></i></span></a></li>
+                <li><i class="fas fa-rocket"></i><a href="login.html"> Create Campaign</a><span class="locked-overlay"><i class="fas fa-lock"></i></span></li>
+                <li><i class="fas fa-palette"></i> <a href="login.html">View Templates</a><span class="locked-overlay"><i class="fas fa-lock"></i></span></li>
+                <li><i class="fas fa-chart-bar"></i> <a href="login.html">View Reports</a><span class="locked-overlay"><i class="fas fa-lock"></i></span></li>
+                <li><i class="fas fa-tachometer-alt"></i> <a href="login.html">DashBoard</a><span class="locked-overlay"><i class="fas fa-lock"></i></span></li>
+            </ul>
+            <div class="info-box" style="margin-top: 2rem; padding: 1rem; background: rgba(255, 193, 7, 0.1); border-radius: 10px; text-align: center;">
+                <i class="fas fa-info-circle" style="color: #ffc107; margin-bottom: 0.5rem;"></i>
+                <p style="font-size: 0.9rem; color: #FFF;">Please login to access all features</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <h1><span style="color: #e3a119;">Sciatius</span> Bulk Emailer</h1>
+                <p>"Where Every Insight is a Victory"</p>
+            </section>
+
+            <!-- Tabs Section -->
+            <div class="info-switcher-section" style="margin-bottom: 2rem; text-align: center;">
+                <div class="switcher-buttons" style="display: inline-flex; gap: 1rem;">
+                    <button id="tab-bulk" class="active" style="padding: 0.8rem 1.5rem; border-radius: 50px; border: none; background: #667eea; color: #fff; font-weight: 600; cursor: pointer; transition: all 0.3s ease;"><span style="color: #e3a119;">Sciatius</span> Bulk Emailer</button>
+                    <button id="tab-company" style="padding: 0.8rem 1.5rem; border-radius: 50px; border: none; background: #031119; color: #e3a119; font-weight: 600; cursor: pointer; transition: all 0.3s ease;"><span style="color: #e3a119;">Sciatius</span> Research</button>
+                </div>
+
+                <!-- Bulk Emailer Tab -->
+                <div id="content-bulk" class="tab-content" style="margin-top: 2rem;">
+                    <section class="info-section">
+                        <h2>What is Sciatius Bulk Emailer?</h2>
+                        <p>Sciatius Bulk Emailer is an enterprise-grade email marketing platform developed by Sciatius Research. Designed to elevate your outreach, it empowers businesses to deliver highly personalized, data-driven campaigns that maximize engagement and ROI.
+The platform integrates advanced automation, segmentation, and analytics to streamline every step of your email marketing workflow. Whether sending targeted promotions, product launches, internal communications, or transactional messages, Sciatius Bulk Emailer ensures consistent delivery, compliance, and measurable results.
+Its intuitive interface allows marketers to design visually appealing HTML emails, perform A/B testing, automate campaign sequences, and track real-time engagement metrics. With robust security and GDPR-compliant protocols, your campaigns remain safe, efficient, and fully optimized for every audience segment.</p>
+                        <div class="company-info">
+                            <div class="info-card">
+                                <i class="fas fa-rocket"></i>
+                                <h3>Advanced Campaign Management</h3>
+                                <p>Plan, schedule, and automate sophisticated campaigns with dynamic personalization to target specific audiences effectively.</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-chart-line"></i>
+                                <h3>Real-Time Analytics</h3>
+                                <p>Track open rates, clicks, conversions, and engagement patterns, enabling data-driven optimizations for each campaign.</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>Enterprise Security</h3>
+                                <p>Built-in compliance with industry standards ensures data protection, secure communications, and GDPR-ready operations.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Company Tab -->
+                <div id="content-company" class="tab-content" style="display:none; margin-top: 2rem;">
+                    <section class="info-section">
+                        <h2>About Sciatius Research</h2>
+                        <p>Sciatius Research is a global leader in market intelligence, business analytics, and strategic consulting. With the tagline "Where Every Insight is a Victory," the company empowers organizations worldwide to leverage data for actionable insights and informed decision-making.
+Founded with a vision to transform raw data into meaningful strategies, Sciatius Research combines AI-driven analytics, cutting-edge technologies, and expert market research to deliver comprehensive solutions across industries.
+Operating across India, UK, UAE, and beyond, the company serves clients in retail, finance, healthcare, technology, and consumer goods sectors. Its mission is to drive sustainable growth through innovation, predictive insights, and operational excellence.</p>
+                        <div class="company-info">
+                            <div class="info-card">
+                                <i class="fas fa-globe"></i>
+                                <h3>Global Presence</h3>
+                                <p>Offices in India, UK, UAE, and Singapore, delivering AI-driven intelligence solutions worldwide.</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-brain"></i>
+                                <h3>AI-Powered Insights</h3>
+                                <p>Leverages artificial intelligence and advanced analytics to turn data into actionable business strategies.</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-trophy"></i>
+                                <h3>Industry Leadership</h3>
+                                <p>Recognized for expertise in predictive analytics, strategic consulting, and delivering measurable business impact.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Tabs Switching
+        const tabBulk = document.getElementById('tab-bulk');
+        const tabCompany = document.getElementById('tab-company');
+        const contentBulk = document.getElementById('content-bulk');
+        const contentCompany = document.getElementById('content-company');
+
+        tabBulk.addEventListener('click', () => {
+            tabBulk.classList.add('active');
+            tabCompany.classList.remove('active');
+            contentBulk.style.display = 'block';
+            contentCompany.style.display = 'none';
+            tabBulk.style.background = '#667eea'; tabBulk.style.color = '#fff';
+            tabCompany.style.background = '#031119'; tabCompany.style.color = '#e3a119';
+        });
+
+        tabCompany.addEventListener('click', () => {
+            tabCompany.classList.add('active');
+            tabBulk.classList.remove('active');
+            contentBulk.style.display = 'none';
+            contentCompany.style.display = 'block';
+            tabCompany.style.background = '#667eea'; tabCompany.style.color = '#fff';
+            tabBulk.style.background = '#031119'; tabBulk.style.color = '#e3a119';
+        });
+
+        // Sidebar feature click tooltip
+        const lockedFeatures = document.querySelectorAll('.feature-list li');
+        lockedFeatures.forEach(feature => {
+            feature.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tooltip = document.createElement('div');
+                tooltip.textContent = "Please login to access this feature";
+                tooltip.style.cssText = `
+                    position: absolute;
+                    background: rgba(0,0,0,0.8);
+                    color: #fff;
+                    padding: 0.5rem 1rem;
+                    border-radius: 5px;
+                    top: -40px;
+                    right: 0;
+                    font-size: 0.9rem;
+                    white-space: nowrap;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+                feature.appendChild(tooltip);
+                requestAnimationFrame(() => { tooltip.style.opacity = '1'; });
+                setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => { feature.removeChild(tooltip); }, 300);
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

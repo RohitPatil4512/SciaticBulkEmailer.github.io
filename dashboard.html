@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sciatius Bulk Emailer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #031119 0%, #1a2634 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #072637 0%, #0a3a50 100%);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 3rem;
+            margin: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 10px;
+            border-radius: 50px;
+            transition: all 0.5s ease;
+            z-index: 1000;
+            height: 50px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo img {
+            height: 2.2em; /* Adjust height as needed */
+            vertical-align: middle;
+            margin-right: 10px; /* Space between logo and text */
+            transition: filter 0.3s ease;
+        }
+
+        .logo img:hover {
+            filter: brightness(1.2); /* Slight brighten on hover */
+        }
+
+        .logo i {
+            margin-right: 0.6rem;
+            font-size: 2.2rem;
+            color: #e3a119;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-details h4 {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .user-details p {
+            color: #ccc;
+            font-size: 0.8rem;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 90px);
+            transition: all 0.5s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #031119 0%, #1a2634 100%);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            box-shadow: 3px 0 25px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 90px;
+            bottom: 0;
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h3 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar h3 i {
+            font-size: 1.8rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .nav-list li {
+            margin: 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .nav-list li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .nav-list a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-list a i {
+            margin-right: 0.6rem;
+            color: #e3a119;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .nav-list a:hover {
+            color: #e3a119;
+        }
+
+        .logout-btn {
+            margin-top: 2.5rem;
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #f7c948 0%, #e3a119 100%);
+        }
+
+        .logout-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 4rem;
+            margin-left: 300px;
+            transition: all 0.5s ease;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3.5rem;
+            border-radius: 25px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .welcome-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: rotate(45deg);
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-section p {
+            font-size: 1.3rem;
+            opacity: 0.85;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .quick-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-item .number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+            color: #e3a119;
+        }
+
+        .stat-item .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(102, 126, 234, 0.2) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 0;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card h3 {
+            color: #e3a119;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card p {
+            color: #fff;
+            line-height: 1.7;
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+            opacity: 0.85;
+        }
+
+        .feature-card .action-btn {
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: white;
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 50px;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #f7c948 0%, #e3a119 100%);
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .recent-activity:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .recent-activity h2 {
+            color: #e3a119;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .recent-activity h2 i {
+            margin-right: 0.5rem;
+            color: #667eea;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+        }
+
+        .activity-content h4 {
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .activity-content p {
+            color: #ccc;
+            font-size: 0.8rem;
+        }
+
+        .activity-time {
+            margin-left: auto;
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+
+            .main-content {
+                margin-left: 250px;
+                padding: 3rem;
+            }
+
+            .welcome-section h1 {
+                font-size: 2.3rem;
+            }
+
+            .nav-list li {
+                height: 55px;
+            }
+
+            .logo img {
+                height: 2em; /* Slightly smaller on medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                padding: 1.5rem;
+                box-shadow: none;
+                min-height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1rem;
+            }
+
+            .header {
+                padding: 1rem 1.5rem;
+                height: 60px;
+                margin: 10px;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                height: 1.8em; /* Adjusted for mobile */
+            }
+
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+
+            .welcome-section p {
+                font-size: 1.1rem;
+            }
+
+            .quick-stats {
+                flex-wrap: wrap;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-list li {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .welcome-section p {
+                font-size: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.2rem;
+            }
+
+            .sidebar h3 {
+                font-size: 1.4rem;
+            }
+
+            .nav-list li {
+                height: 45px;
+                padding: 0.8rem;
+            }
+
+            .nav-list a {
+                font-size: 0.9rem;
+            }
+
+            .logo img {
+                height: 1.5em; /* Smaller on small screens */
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #e3a119;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="https://aicdn.picsart.com/238659d5-a438-4220-8411-a36fba4d2ac0.png" alt="Sciatius Bulk Emailer Logo"> <!-- Replace with your logo path -->
+            <span style="color: #e3a119;">Sciatius</span>&nbsp;Bulk Emailer
+        </div>
+        <div class="user-info">
+            <div class="user-avatar" id="user-avatar">U</div>
+            <div class="user-details">
+                <h4 id="user-name">Loading...</h4>
+                <p id="user-email">Loading...</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3><i class="fas fa-tachometer-alt"></i> Navigation</h3>
+            <ul class="nav-list">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="upload_contacts.html"><i class="fas fa-upload"></i> Upload Contacts</a></li>
+                <li><a href="create_campaign.html"><i class="fas fa-rocket"></i> Create Campaign</a></li>
+                <li><a href="templates.html"><i class="fas fa-palette"></i> View Templates</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-bar"></i> View Reports</a></li>
+                <li><a href="index.html"><i class="fas fa-globe"></i> Home Page</a></li>
+            </ul>
+            <button class="logout-btn" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-content">
+                    <h1 id="welcome-title">Welcome back!</h1>
+                    <p>Ready to create powerful email campaigns? Let's turn your insights into victories.</p>
+                    <div class="quick-stats">
+                        <div class="stat-item">
+                            <span class="number" id="total-contacts">0</span>
+                            <span class="label">Total Contacts</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="number" id="total-campaigns">0</span>
+                            <span class="label">Campaigns</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="number" id="success-rate">0%</span>
+                            <span class="label">Success Rate</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Grid -->
+            <section class="features-grid">
+                <div class="feature-card" onclick="navigateTo('upload-contacts.html')">
+                    <div class="feature-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h3>Upload Contacts</h3>
+                    <p>Import your contact lists from CSV files with automatic email validation and deduplication.</p>
+                    <button class="action-btn">Start Upload</button>
+                </div>
+
+                <div class="feature-card" onclick="navigateTo('create-campaign.html')">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Create Campaign</h3>
+                    <p>Design beautiful email campaigns with our drag-and-drop editor and professional templates.</p>
+                    <button class="action-btn">Create Now</button>
+                </div>
+
+                <div class="feature-card" onclick="navigateTo('view-templates.html')">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>View Templates</h3>
+                    <p>Browse our collection of professional email templates designed for maximum engagement.</p>
+                    <button class="action-btn">Browse Templates</button>
+                </div>
+
+                <div class="feature-card" onclick="navigateTo('view-reports.html')">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>View Reports</h3>
+                    <p>Analyze campaign performance with detailed reports and actionable insights.</p>
+                    <button class="action-btn">View Analytics</button>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="recent-activity">
+                <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                <ul class="activity-list" id="activity-list">
+                    <!-- Activity items will be populated by JavaScript -->
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                alert('Please login to access the dashboard');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            if (!checkAuth()) return;
+
+            // Load user info
+            loadUserInfo();
+            loadStats();
+            loadRecentActivity();
+        }
+
+        // Load user information
+        function loadUserInfo() {
+                        const userEmail = localStorage.getItem('userEmail') || 'user@example.com';
+            const userName = userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1);
+            
+            document.getElementById('user-email').textContent = userEmail;
+            document.getElementById('user-name').textContent = userName;
+            document.getElementById('user-avatar').textContent = userName.charAt(0);
+            document.getElementById('welcome-title').textContent = `Welcome back, ${userName}!`;
+        }
+
+        // Load dashboard statistics
+        function loadStats() {
+            // Get stored data
+            const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            const campaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+            
+            // Calculate stats
+            const totalContacts = contacts.length;
+            const totalCampaigns = campaigns.length;
+            const successRate = campaigns.length > 0 ? Math.round(campaigns.filter(c => c.status === 'sent').length / campaigns.length * 100) : 0;
+            
+            // Update UI with animation
+            animateNumber('total-contacts', totalContacts);
+            animateNumber('total-campaigns', totalCampaigns);
+            animateNumber('success-rate', successRate, '%');
+        }
+
+        // Animate numbers
+        function animateNumber(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // Load recent activity
+        function loadRecentActivity() {
+            const activities = [
+                {
+                    icon: 'fas fa-upload',
+                    title: 'Contact List Uploaded',
+                    description: 'Successfully imported 150 contacts',
+                    time: '2 hours ago'
+                },
+                {
+                    icon: 'fas fa-rocket',
+                    title: 'Campaign Created',
+                    description: 'New product launch campaign ready',
+                    time: '5 hours ago'
+                },
+                {
+                    icon: 'fas fa-chart-line',
+                    title: 'Report Generated',
+                    description: 'Monthly performance report available',
+                    time: '1 day ago'
+                },
+                {
+                    icon: 'fas fa-envelope',
+                    title: 'Emails Sent',
+                    description: 'Newsletter sent to 500 subscribers',
+                    time: '2 days ago'
+                }
+            ];
+
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+
+            activities.forEach((activity, index) => {
+                const activityItem = document.createElement('li');
+                activityItem.className = 'activity-item';
+                activityItem.style.animationDelay = `${index * 0.1}s`;
+                
+                activityItem.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description}</p>
+                    </div>
+                    <div class="activity-time">${activity.time}</div>
+                `;
+                
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        // Navigation function
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            initDashboard();
+
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('loginTime');
+                    window.location.href = 'logout.html';
+                }
+            });
+
+            // Add hover effects to feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Update login time
+            localStorage.setItem('lastActivity', new Date().toISOString());
+        });
+
+        // Auto-logout after inactivity (30 minutes)
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert('Session expired due to inactivity. Please login again.');
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = 'login.html';
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        // Track user activity
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, true);
+        });
+
+        // Initialize inactivity timer
+        resetInactivityTimer();
+    </script>
+</body>
+</html>

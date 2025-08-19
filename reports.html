@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Reports - Sciatius Bulk Emailer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #031119 0%, #1a2634 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #072637 0%, #0a3a50 100%);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            border-radius: 50px;
+            z-index: 2000;
+            height: 50px;
+            margin: 10px 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+            color: #e3a119;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 40px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(227, 161, 25, 0.5);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .action-btn.secondary:hover {
+            box-shadow: 0 12px 30px rgba(40, 167, 69, 0.5);
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 90px);
+            transition: all 0.5s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #031119 0%, #1a2634 100%);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            box-shadow: 3px 0 25px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 90px;
+            max-height: calc(100vh - 90px);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.5s ease;
+        }
+
+        .sidebar h3 {
+            color: #e3a119;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar h3 i {
+            font-size: 1.8rem;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-list a {
+            display: block;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-list a:hover {
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: #fff;
+        }
+
+        .nav-list a i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+
+        /* Date Range Picker */
+        .date-range {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+        }
+
+        .date-range h4 {
+            color: #ccc;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .date-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .date-inputs input {
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .apply-filter-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apply-filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(227, 161, 25, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 3rem;
+            transition: all 0.5s ease;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #e3a119;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: #ccc;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--card-color, linear-gradient(135deg, #e3a119 0%, #f7c948 100%));
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: var(--card-color, linear-gradient(135deg, #e3a119 0%, #f7c948 100%));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-change {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        .stat-change.positive {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header h3 {
+            color: #e3a119;
+            font-size: 1.3rem;
+        }
+
+        .chart-period {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Campaign Performance Table */
+        .campaigns-table-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .campaigns-table-section h3 {
+            color: #e3a119;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .campaigns-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .campaigns-table th {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #fff;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .campaigns-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .campaigns-table tr:hover {
+            background: rgba(227, 161, 25, 0.1);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-sent {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .status-scheduled {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-draft {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .performance-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .performance-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* Insights Section */
+        .insights-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .insight-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #e3a119 0%, #f7c948 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            margin-right: 1rem;
+        }
+
+        .insight-card h4 {
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .insight-card p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .insight-recommendation {
+            background: rgba(227, 161, 25, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border-left: 4px solid #e3a119;
+        }
+
+        .insight-recommendation strong {
+            color: #e3a119;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+                max-height: none;
+                padding: 1.5rem;
+                box-shadow: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1rem;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .action-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .campaigns-table {
+                font-size: 0.9rem;
+            }
+
+            .campaigns-table th,
+            .campaigns-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #e3a119;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Chart Canvas Styling */
+        .chart-canvas {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-canvas canvas {
+            max-height: 100%;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+          <img src="https://aicdn.picsart.com/551e5e55-85ba-4d99-bbe1-a84d3e96d35e.png" alt="Company Logo" style="height: 2em; vertical-align: middle; margin-right: 8px;">
+          <span style="color: #e3a119;">Sciatius</span>&nbsp;Bulk Emailer
+        </div>
+        <div class="header-actions">
+            <button class="action-btn secondary" onclick="exportReports()">
+                <i class="fas fa-download"></i> Export Report
+            </button>
+            <a href="dashboard.html" class="action-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3><i class="fas fa-tachometer-alt"></i> Navigation</h3>
+            <ul class="nav-list">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="upload_contacts.html"><i class="fas fa-upload"></i> Upload Contacts</a></li>
+                <li><a href="create_campaign.html"><i class="fas fa-rocket"></i> Create Campaign</a></li>
+                <li><a href="templates.html"><i class="fas fa-palette"></i> View Templates</a></li>
+                <li><a href="reports.html" class="active"><i class="fas fa-chart-bar"></i> View Reports</a></li>
+            </ul>
+
+            <!-- Date Range Filter -->
+            <div class="date-range">
+                <h4><i class="fas fa-calendar"></i> Date Range</h4>
+                <div class="date-inputs">
+                    <input type="date" id="start-date" value="">
+                    <input type="date" id="end-date" value="">
+                </div>
+                <button class="apply-filter-btn" onclick="applyDateFilter()">
+                    <i class="fas fa-filter"></i> Apply Filter
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <section class="page-header">
+                <h1>Campaign Analytics</h1>
+                <p>Track performance, analyze trends, and optimize your email marketing strategy</p>
+            </section>
+
+            <!-- Stats Overview -->
+            <section class="stats-overview">
+                <div class="stat-card" style="--card-color: linear-gradient(135deg, #e3a119 0%, #f7c948 100%)">
+                    <div class="stat-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <span class="stat-number" id="total-sent">0</span>
+                    <div class="stat-label">Total Sent</div>
+                    <div class="stat-change positive">+12% from last month</div>
+                </div>
+
+                <div class="stat-card" style="--card-color: linear-gradient(135deg, #28a745 0%, #20c997 100%)">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <span class="stat-number" id="delivery-rate">0%</span>
+                    <div class="stat-label">Delivery Rate</div>
+                    <div class="stat-change positive">+3% from last month</div>
+                </div>
+
+                <div class="stat-card" style="--card-color: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%)">
+                    <div class="stat-icon">
+                        <i class="fas fa-envelope-open"></i>
+                    </div>
+                    <span class="stat-number" id="open-rate">0%</span>
+                    <div class="stat-label">Open Rate</div>
+                    <div class="stat-change positive">+8% from last month</div>
+                </div>
+
+                <div class="stat-card" style="--card-color: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%)">
+                    <div class="stat-icon">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </div>
+                    <span class="stat-number" id="click-rate">0%</span>
+                    <div class="stat-label">Click Rate</div>
+                    <div class="stat-change positive">+15% from last month</div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Campaign Performance Over Time</h3>
+                        <span class="chart-period">Last 30 days</span>
+                    </div>
+                    <div class="chart-canvas">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Email Engagement</h3>
+                        <span class="chart-period">Current month</span>
+                    </div>
+                    <div class="chart-canvas">
+                        <canvas id="engagement-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Campaign Performance Table -->
+            <section class="campaigns-table-section">
+                <h3><i class="fas fa-table"></i> Recent Campaigns</h3>
+                <div style="overflow-x: auto;">
+                    <table class="campaigns-table">
+                        <thead>
+                            <tr>
+                                <th>Campaign Name</th>
+                                <th>Date Sent</th>
+                                <th>Recipients</th>
+                                <th>Delivered</th>
+                                <th>Opened</th>
+                                <th>Clicked</th>
+                                <th>Status</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaigns-table-body">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- AI Insights Section -->
+            <section class="insights-section">
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4>Performance Insight</h4>
+                    </div>
+                    <p>Your email open rates are 23% higher than industry average. Your subject lines are performing exceptionally well!</p>
+                    <div class="insight-recommendation">
+                        <strong>Recommendation:</strong> Consider A/B testing your current successful subject line formats with new campaigns.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h4>Optimal Send Time</h4>
+                    </div>
+                    <p>Based on your audience engagement data, Tuesday at 10:00 AM shows the highest open and click-through rates.</p>
+                    <div class="insight-recommendation">
+                        <strong>Recommendation:</strong> Schedule important campaigns during this optimal time window for maximum engagement.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <div class="insight-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4>Audience Segmentation</h4>
+                    </div>
+                    <p>Segmented campaigns are showing 35% higher engagement rates compared to broadcast campaigns.</p>
+                    <div class="insight-recommendation">
+                        <strong>Recommendation:</strong> Focus on creating more targeted, segmented campaigns to improve overall performance.
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                alert('Please login to access this page');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        let performanceChart, engagementChart;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+
+            setDefaultDateRange();
+            loadReportsData();
+            initializeCharts();
+            loadCampaignsTable();
+        });
+
+        function setDefaultDateRange() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            document.getElementById('end-date').value = today.toISOString().split('T')[0];
+            document.getElementById('start-date').value = thirtyDaysAgo.toISOString().split('T')[0];
+        }
+
+        function loadReportsData() {
+            const campaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+            const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            
+            // Calculate aggregate statistics
+            const totalSent = campaigns.reduce((sum, campaign) => sum + (campaign.sent || 0), 0);
+            const totalDelivered = campaigns.reduce((sum, campaign) => sum + (campaign.delivered || 0), 0);
+            const totalOpened = campaigns.reduce((sum, campaign) => sum + (campaign.opened || 0), 0);
+            const totalClicked = campaigns.reduce((sum, campaign) => sum + (campaign.clicked || 0), 0);
+            
+            const deliveryRate = totalSent > 0 ? Math.round((totalDelivered / totalSent) * 100) : 0;
+            const openRate = totalDelivered > 0 ? Math.round((totalOpened / totalDelivered) * 100) : 0;
+            const clickRate = totalOpened > 0 ? Math.round((totalClicked / totalOpened) * 100) : 0;
+            
+            // Animate statistics
+            animateNumber('total-sent', totalSent);
+            animateNumber('delivery-rate', deliveryRate, '%');
+            animateNumber('open-rate', openRate, '%');
+            animateNumber('click-rate', clickRate, '%');
+        }
+
+        function animateNumber(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        function initializeCharts() {
+            // Performance Over Time Chart
+            const performanceCtx = document.getElementById('performance-chart').getContext('2d');
+            performanceChart = new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: generateDateLabels(30),
+                    datasets: [{
+                        label: 'Emails Sent',
+                        data: generateRandomData(30, 100, 500),
+                        borderColor: '#e3a119',
+                        backgroundColor: 'rgba(227, 161, 25, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Emails Opened',
+                        data: generateRandomData(30, 20, 150),
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#fff' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#ccc' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#ccc' }
+                        }
+                    }
+                }
+            });
+
+            // Engagement Pie Chart
+            const engagementCtx = document.getElementById('engagement-chart').getContext('2d');
+            engagementChart = new Chart(engagementCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Opened', 'Clicked', 'Unsubscribed', 'Bounced'],
+                    datasets: [{
+                        data: [45, 15, 5, 8],
+                        backgroundColor: [
+                            '#e3a119',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadCampaignsTable() {
+            const campaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+            const tableBody = document.getElementById('campaigns-table-body');
+            
+            if (campaigns.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #ccc; padding: 2rem;">
+                            <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i><br>
+                            No campaigns found. <a href="create-campaign.html" style="color: #e3a119;">Create your first campaign</a>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = '';
+            
+            campaigns.reverse().forEach((campaign, index) => {
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.1}s`;
+                
+                const deliveryRate = campaign.sent > 0 ? Math.round((campaign.delivered / campaign.sent) * 100) : 0;
+                const openRate = campaign.delivered > 0 ? Math.round((campaign.opened / campaign.delivered) * 100) : 0;
+                const clickRate = campaign.opened > 0 ? Math.round((campaign.clicked / campaign.opened) * 100) : 0;
+                
+                row.innerHTML = `
+                    <td>
+                        <strong>${campaign.campaignname || 'Untitled Campaign'}</strong><br>
+                        <small style="color: #ccc;">${campaign.subjectline || 'No subject'}</small>
+                    </td>
+                    <td>${formatDate(campaign.createdAt)}</td>
+                    <td>${campaign.sent || 0}</td>
+                    <td>
+                        ${campaign.delivered || 0}
+                        <div class="performance-bar">
+                            <div class="performance-fill" style="width: ${deliveryRate}%"></div>
+                        </div>
+                        <small>${deliveryRate}%</small>
+                    </td>
+                    <td>
+                        ${campaign.opened || 0}
+                        <div class="performance-bar">
+                            <div class="performance-fill" style="width: ${openRate}%"></div>
+                        </div>
+                        <small>${openRate}%</small>
+                    </td>
+                    <td>
+                        ${campaign.clicked || 0}
+                        <div class="performance-bar">
+                            <div class="performance-fill" style="width: ${clickRate}%"></div>
+                        </div>
+                        <small>${clickRate}%</small>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${campaign.status || 'draft'}">
+                            ${(campaign.status || 'draft').charAt(0).toUpperCase() + (campaign.status || 'draft').slice(1)}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <div class="performance-bar" style="margin-right: 0.5rem;">
+                                <div class="performance-fill" style="width: ${(openRate + clickRate) / 2}%"></div>
+                            </div>
+                            <small>${Math.round((openRate + clickRate) / 2)}%</small>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function generateDateLabels(days) {
+            const labels = [];
+            const today = new Date();
+            
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            }
+            
+            return labels;
+        }
+
+        function generateRandomData(length, min, max) {
+            const data = [];
+            for (let i = 0; i < length; i++) {
+                data.push(Math.floor(Math.random() * (max - min + 1)) + min);
+            }
+            return data;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function applyDateFilter() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            // Reload data with date filter
+            loadReportsData();
+            loadCampaignsTable();
+            
+                        // Update charts with filtered data
+            const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+            
+            performanceChart.data.labels = generateDateLabels(days);
+            performanceChart.data.datasets[0].data = generateRandomData(days, 100, 500);
+            performanceChart.data.datasets[1].data = generateRandomData(days, 20, 150);
+            performanceChart.update();
+            
+            // Show success message
+            showNotification('Date filter applied successfully!', 'success');
+        }
+
+        function exportReports() {
+            const campaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+            
+            if (campaigns.length === 0) {
+                alert('No campaign data to export');
+                return;
+            }
+            
+            // Create CSV content
+            const headers = ['Campaign Name', 'Subject', 'Date Created', 'Recipients', 'Delivered', 'Opened', 'Clicked', 'Status'];
+            const csvContent = [
+                headers.join(','),
+                ...campaigns.map(campaign => [
+                    `"${campaign.campaignname || 'Untitled'}"`,
+                    `"${campaign.subjectline || 'No subject'}"`,
+                    `"${formatDate(campaign.createdAt)}"`,
+                    campaign.sent || 0,
+                    campaign.delivered || 0,
+                    campaign.opened || 0,
+                    campaign.clicked || 0,
+                    campaign.status || 'draft'
+                ].join(','))
+            ].join('\n');
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sciatius-email-reports-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Report exported successfully!', 'success');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#e3a119'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS for notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

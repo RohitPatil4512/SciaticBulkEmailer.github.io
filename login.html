@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Sciatius Bulk Emailer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #031119 0%, #1a2634 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Background Animation */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .container {
+      display: flex;
+      width: 900px;
+      height: 500px;
+      background: #fdfdfd;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-section {
+      flex: 1;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(#0f0c29,#302b63);
+    }
+
+    .login-section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .login-section p {
+      font-size: 14px;
+      color: #ebe0e0;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      background: #f7f5ff;
+    }
+
+    /* Colorful Icons */
+    .input-group i {
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .email-icon {
+      color: #ff6a00; /* orange */
+    }
+    .lock-icon {
+      color: #e74c3c; /* red */
+    }
+
+    .input-group input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #7158e2, #8e44ad);
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+
+    .login-btn:hover {
+      transform: scale(1.03);
+    }
+
+    .social-login {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .social-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .social-btn img {
+      width: 20px;
+      margin-right: 10px;
+    }
+
+    .image-section {
+      flex: 1.4;
+      background: linear-gradient(135deg, #836fff, #9277f3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .image-section img {
+      width: 120%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Back to Home */
+    .back-home {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 0.6rem 1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      z-index: 3;
+    }
+
+    .back-home:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(-5px);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+      .image-section {
+        order: -1;
+        height: 300px;
+      }
+      .image-section img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Animation -->
+  <div class="bg-animation" id="bg-animation"></div>
+
+  <!-- Back to Home Link -->
+  <a href="index.html" class="back-home">
+    <i class="fas fa-arrow-left"></i> Back to Home
+  </a>
+
+  <div class="container">
+    <!-- Login Section -->
+    <div class="login-section">
+      <h2>Welcome Back</h2>
+      <p>Sign in to your account to continue</p>
+
+      <div class="input-group">
+        <i class="fas fa-envelope email-icon"></i>
+        <input type="email" id="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock lock-icon"></i>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+
+      <button class="login-btn" id="login-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+
+      <div class="social-login">
+        <p>Don't have an account? <a href="#" id="signup-link">Sign up here</a></p>
+        <p style="margin-top: 0.5rem;"><a href="#" id="forgot-password">Forgot password?</a></p>
+      </div>
+    </div>
+
+    <!-- Image Section -->
+    <div class="image-section">
+      <img src="https://aicdn.picsart.com/37705d0d-312f-45cd-9037-8698520a6709.png" alt="Login Image">
+    </div>
+  </div>
+
+  <script>
+    // Initialize 3D background animation
+    function initBackgroundAnimation() {
+      const container = document.getElementById('bg-animation');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 100;
+      const posArray = new Float32Array(particlesCount * 3);
+
+      for (let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+      }
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.03,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particlesMesh);
+      camera.position.z = 5;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        particlesMesh.rotation.y += 0.002;
+        particlesMesh.rotation.x += 0.001;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initBackgroundAnimation();
+
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const loginBtn = document.getElementById('login-btn');
+
+      const validCredentials = {
+        'admin@sciatiusresearch.com': 'admin123',
+        'user@sciatiusresearch.com': 'user123',
+        'demo@sciatiusresearch.com': 'demo123'
+      };
+
+      loginBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!email || !password) {
+          alert('Please fill in all fields');
+          return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          alert('Please enter a valid email address');
+          return;
+        }
+
+        loginBtn.textContent = 'Signing In...';
+        setTimeout(() => {
+          if (validCredentials[email] && validCredentials[email] === password) {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('loginTime', new Date().toISOString());
+            alert('Login successful! Redirecting to dashboard...');
+            window.location.href = 'dashboard.html';
+          } else {
+            alert('Invalid email or password. Try demo@sciatiusresearch.com / demo123');
+          }
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+        }, 1500);
+      });
+
+      document.getElementById('signup-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Demo Account Info:\nEmail: demo@sciatiusresearch.com\nPassword: demo123\n\nOr try:\nadmin@sciatiusresearch.com / admin123');
+      });
+
+      document.getElementById('forgot-password').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('For demo purposes, please use:\ndemo@sciatiusresearch.com / demo123');
+      });
+
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        alert('Already logged in! Redirecting to dashboard...');
+        window.location.href = 'dashboard.html';
+      }
+
+      emailInput.value = 'demo@sciatiusresearch.com';
+      passwordInput.value = 'demo123';
+    });
+  </script>
+
+</body>
+</html>
